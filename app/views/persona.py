@@ -17,6 +17,10 @@ class PersonaCreate(PersonaBase):
     """Schema used for creating a new Persona."""
     pass
 
+class PoblarRequest(BaseModel):
+   """Cuerpo del POST /personas/poblar: solo la cantidad de registros a
+   crear."""
+   cantidad: int
 
 class PersonaUpdate(BaseModel):
     """Schema used for partial update of Persona."""
