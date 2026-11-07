@@ -54,6 +54,7 @@ def list_personas(
 
 @router.get("/estadisticas/edad", response_model=EstadisticasEdadResponse)
 def estadisticas_edad_endpoint(db: Session = Depends(get_db)):
+    """Endpoint 4: Retorna edad promedio (1 decimal), minima y maxima calculadas con TIMESTAMPDIFF en SQL."""
     return persona_service.obtener_estadisticas_edad(db)
 
 
