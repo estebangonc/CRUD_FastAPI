@@ -32,6 +32,7 @@ def reset_endpoint(db: Session = Depends(get_db)):
 
 @router.get("/estadisticas/dominios")
 def estadisticas_dominios_endpoint(db: Session = Depends(get_db)):
+    """Endpoint 3: Cantidad de personas por proveedor de correo (GROUP BY)."""
     return persona_service.estadisticas_dominios(db)
 
 
