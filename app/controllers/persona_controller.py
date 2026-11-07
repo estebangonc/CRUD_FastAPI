@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..views.persona import PersonaCreate, PersonaUpdate, PersonaRead
+from ..views.persona import PersonaCreate, PersonaUpdate, PersonaRead, PoblarRequest
 from ..services import persona_service
 
 router = APIRouter(prefix="/personas", tags=["personas"])
@@ -14,6 +14,11 @@ def create_persona(persona_in: PersonaCreate, db: Session = Depends(get_db)):
     """Create a new Persona delegating to service layer."""
     # Let domain errors bubble up to global handlers
     return persona_service.create_persona(db, persona_in)
+
+@router.post("/poblar", status_code=status.HTTP_201_CREATED)
+def poblar_endpoint(payload: PoblarRequest, db: Session = Depends(get_db)):
+    creados = persona_service.poblar_personas(db, payload.cantidad)
+    return {"message": f"{creados} usuarios creados exitosamente", "status": 201}
 
 
 @router.get("", response_model=List[PersonaRead])
