@@ -179,3 +179,6 @@ def buscar_personas_por_termino(db: Session, termino: str):
             Persona.email.ilike(patron, escape="!"),
         )
     ).all()
+
+def obtener_personas_activas(db: Session):
+    return db.query(Persona).filter(Persona.is_active.is_(True)).all()

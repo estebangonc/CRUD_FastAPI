@@ -51,3 +51,11 @@ class EstadisticasEdadResponse(BaseModel):
     edad_promedio: float
     edad_minima: int
     edad_maxima: int
+
+class PersonaActivaResponse(BaseModel):
+    id: int
+    email: str
+    phone: str | None = None
+    is_active: bool
+
+    model_config = {"from_attributes": True}
