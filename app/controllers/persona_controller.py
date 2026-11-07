@@ -23,6 +23,7 @@ def poblar_endpoint(payload: PoblarRequest, db: Session = Depends(get_db)):
 
 @router.delete("/reset")
 def reset_endpoint(db: Session = Depends(get_db)):
+    """Endpoint 2: Elimina todos los registros. Va antes de DELETE /{persona_id}."""
     eliminados = persona_service.reset_personas(db)
     return {
         "message": "Base de datos limpiada. Se eliminaron todos los registros.",
