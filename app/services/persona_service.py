@@ -4,6 +4,8 @@ import unicodedata
 from faker import Faker
 
 from typing import Sequence
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -83,6 +85,16 @@ def reset_personas(db: Session) -> int:
     eliminados = db.query(Persona).delete()
     db.commit()
     return eliminados
+
+def estadisticas_dominios(db: Session) -> dict:
+    """Cuenta personas por dominio de correo (lo que hay despues del @)."""
+    sql = text(f"""
+        SELECT SUBSTRING_INDEX(email, '@', -1) AS dominio, COUNT(*) AS total
+        FROM {Persona.__tablename__}
+        GROUP BY dominio
+        ORDER BY total DESC
+    """)
+    return {fila.dominio: int(fila.total) for fila in db.execute(sql).fetchall()}
 
 
 def list_personas(db: Session, skip: int = 0, limit: int = 100) -> Sequence[Persona]:
