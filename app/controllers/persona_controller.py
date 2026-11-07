@@ -30,6 +30,10 @@ def reset_endpoint(db: Session = Depends(get_db)):
         "deleted_count": eliminados,
     }
 
+@router.get("/estadisticas/dominios")
+def estadisticas_dominios_endpoint(db: Session = Depends(get_db)):
+    return persona_service.estadisticas_dominios(db)
+
 
 @router.post("", response_model=PersonaRead, status_code=status.HTTP_201_CREATED)
 def create_persona(persona_in: PersonaCreate, db: Session = Depends(get_db)):
