@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..views.persona import PersonaCreate, PersonaUpdate, PersonaRead, PoblarRequest, EstadisticasEdadResponse
+from ..views.persona import PersonaCreate, PersonaUpdate, PersonaRead, PoblarRequest, EstadisticasEdadResponse,PersonaActivaResponse
 from ..services import persona_service
 
 router = APIRouter(prefix="/personas", tags=["personas"])
@@ -62,6 +62,10 @@ def estadisticas_edad_endpoint(db: Session = Depends(get_db)):
 def buscar_personas_endpoint(termino: str, db: Session = Depends(get_db)):
     """Endpoint 5: Busqueda parcial (OR) en nombre, apellido o email; devuelve [] si no hay coincidencias."""
     return persona_service.buscar_personas_por_termino(db, termino)
+
+@router.get("/reporte/activos", response_model=List[PersonaActivaResponse])
+def reporte_activos_endpoint(db: Session = Depends(get_db)):
+    return persona_service.obtener_personas_activas(db)
 
 @router.get("/{persona_id}", response_model=PersonaRead)
 def get_persona(persona_id: int, db: Session = Depends(get_db)):
