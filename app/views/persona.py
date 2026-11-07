@@ -46,3 +46,8 @@ class PersonaRead(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+class EstadisticasEdadResponse(BaseModel):
+    edad_promedio: float
+    edad_minima: int
+    edad_maxima: int
