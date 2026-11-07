@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -7,6 +7,16 @@ from ..views.persona import PersonaCreate, PersonaUpdate, PersonaRead, PoblarReq
 from ..services import persona_service
 
 router = APIRouter(prefix="/personas", tags=["personas"])
+
+@router.post("/poblar", status_code=status.HTTP_201_CREATED)
+def poblar_endpoint(payload: PoblarRequest, db: Session = Depends(get_db)):
+    if payload.cantidad <= 0 or payload.cantidad > 1000:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La cantidad debe ser un entero entre 1 y 1000.",
+        )
+    creados = persona_service.poblar_personas(db, payload.cantidad)
+    return {"message": f"{creados} usuarios creados exitosamente", "status": 201}
 
 
 @router.post("", response_model=PersonaRead, status_code=status.HTTP_201_CREATED)
