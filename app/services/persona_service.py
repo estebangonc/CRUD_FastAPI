@@ -5,7 +5,7 @@ import unicodedata
 from faker import Faker
 
 from typing import Sequence
-from sqlalchemy import text
+from sqlalchemy import or_, text
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -162,3 +162,13 @@ def obtener_estadisticas_edad(db: Session) -> dict:
         "edad_minima": int(fila.minima),
         "edad_maxima": int(fila.maxima),
     }
+
+def buscar_personas_por_termino(db: Session, termino: str):
+    patron = f"%{termino}%"
+    return db.query(Persona).filter(
+        or_(
+            Persona.first_name.ilike(patron),
+            Persona.last_name.ilike(patron),
+            Persona.email.ilike(patron),
+        )
+    ).all()
