@@ -138,3 +138,8 @@ curl -s -X DELETE http://127.0.0.1:8000/personas/1 -i
 - `POST /personas/poblar` - Carga masiva con Faker (1 a 1000 registros, emails únicos con dominios reales).
 - `DELETE /personas/reset` - Borra todos los registros y devuelve cuántos eliminó.
 - `GET /personas/estadisticas/dominios` - Cantidad de personas por proveedor de correo.
+
+### Endpoints desarrollados por Dahiana
+- `GET /personas/estadisticas/edad` - Estadísticas de edad (promedio a 1 decimal, mínima y máxima).
+- `GET /personas/buscar/{termino}` - Búsqueda parcial en nombre, apellido y correo.
+- `GET /personas/reporte/activos` - Reporte proyectado de usuarios activos (id, email, phone, is_active).
