@@ -163,12 +163,19 @@ def obtener_estadisticas_edad(db: Session) -> dict:
         "edad_maxima": int(fila.maxima),
     }
 
+def _escapar_like(valor: str) -> str:
+    return valor.replace("!", "!!").replace("%", "!%").replace("_", "!_")
+
+
 def buscar_personas_por_termino(db: Session, termino: str):
-    patron = f"%{termino}%"
+    termino_limpio = termino.strip()
+    if not termino_limpio:
+        return []
+    patron = f"%{_escapar_like(termino_limpio)}%"
     return db.query(Persona).filter(
         or_(
-            Persona.first_name.ilike(patron),
-            Persona.last_name.ilike(patron),
-            Persona.email.ilike(patron),
+            Persona.first_name.ilike(patron, escape="!"),
+            Persona.last_name.ilike(patron, escape="!"),
+            Persona.email.ilike(patron, escape="!"),
         )
     ).all()
