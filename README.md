@@ -131,3 +131,10 @@ curl -s -X DELETE http://127.0.0.1:8000/personas/1 -i
 
 - Si lo iniciaste en la misma terminal: usa `CTRL+C`.
 - Si corre en background, puedes cerrar esa terminal o matar el proceso de uvicorn (`pkill -f uvicorn`).
+
+
+## Endpoints desarrollados por Esteban
+
+- `POST /personas/poblar` - Carga masiva con Faker (1 a 1000 registros, emails únicos con dominios reales).
+- `DELETE /personas/reset` - Borra todos los registros y devuelve cuántos eliminó.
+- `GET /personas/estadisticas/dominios` - Cantidad de personas por proveedor de correo.
