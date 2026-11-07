@@ -1,3 +1,8 @@
+import random
+import re
+import unicodedata
+from faker import Faker
+
 from typing import Sequence
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -30,6 +35,48 @@ def create_persona(db: Session, payload: PersonaCreate) -> Persona:
         raise EmailAlreadyExistsError() from e
     db.refresh(obj)
     return obj
+
+DOMINIOS_REALES = ["gmail.com", "outlook.com", "yahoo.es", "hotmail.com"]
+
+def _slug(texto: str) -> str:
+    """Pasa a minusculas ASCII, sin tildes ni espacios (para armar emails)."""
+    ascii_txt = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"[^a-z0-9]", "", ascii_txt.lower())
+
+def poblar_personas(db: Session, cantidad: int) -> int:
+    """Crea 'cantidad' personas con datos falsos (Faker) y emails unicos con dominios reales."""
+    fake = Faker("es_CO")
+    usados = {email for (email,) in db.query(Persona.email).all()}
+    nuevas: list[Persona] = []
+    
+    for _ in range(cantidad):
+        nombre = fake.first_name()
+        apellido = fake.last_name()
+        base = f"{_slug(nombre) or 'usuario'}.{_slug(apellido) or 'persona'}"
+        dominio = random.choice(DOMINIOS_REALES)
+        email = f"{base}@{dominio}"
+        n = 1
+        while email in usados: # nombre y apellido repetidos: agrega un numero
+            n += 1
+            email = f"{base}{n}@{dominio}"
+            
+        usados.add(email)
+        nuevas.append(
+            Persona(
+                first_name=nombre,
+                last_name=apellido,
+                email=email,
+                phone=f"+57 3{random.randint(0, 2)}{random.randint(0, 9)} "
+                      f"{random.randint(100, 999)} {random.randint(1000, 9999)}",
+                birth_date=fake.date_of_birth(minimum_age=18, maximum_age=85),
+                is_active=fake.boolean(),
+                notes=fake.sentence(nb_words=6) if random.random() < 0.5 else None,
+            )
+        )
+        
+    db.add_all(nuevas)
+    db.commit()
+    return len(nuevas)
 
 
 def list_personas(db: Session, skip: int = 0, limit: int = 100) -> Sequence[Persona]:
