@@ -65,6 +65,7 @@ def buscar_personas_endpoint(termino: str, db: Session = Depends(get_db)):
 
 @router.get("/reporte/activos", response_model=List[PersonaActivaResponse])
 def reporte_activos_endpoint(db: Session = Depends(get_db)):
+    """Endpoint 6: Reporte de personas activas; devuelve solo id, email, phone e is_active."""
     return persona_service.obtener_personas_activas(db)
 
 @router.get("/{persona_id}", response_model=PersonaRead)
