@@ -60,8 +60,8 @@ def estadisticas_edad_endpoint(db: Session = Depends(get_db)):
 
 @router.get("/buscar/{termino}", response_model=List[PersonaRead])
 def buscar_personas_endpoint(termino: str, db: Session = Depends(get_db)):
+    """Endpoint 5: Busqueda parcial (OR) en nombre, apellido o email; devuelve [] si no hay coincidencias."""
     return persona_service.buscar_personas_por_termino(db, termino)
-
 
 @router.get("/{persona_id}", response_model=PersonaRead)
 def get_persona(persona_id: int, db: Session = Depends(get_db)):
