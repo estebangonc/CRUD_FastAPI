@@ -21,6 +21,15 @@ def poblar_endpoint(payload: PoblarRequest, db: Session = Depends(get_db)):
     creados = persona_service.poblar_personas(db, payload.cantidad)
     return {"message": f"{creados} usuarios creados exitosamente", "status": 201}
 
+@router.delete("/reset")
+def reset_endpoint(db: Session = Depends(get_db)):
+    """Endpoint 2: Elimina todos los registros. Va antes de DELETE /{persona_id}."""
+    eliminados = persona_service.reset_personas(db)
+    return {
+        "message": "Base de datos limpiada. Se eliminaron todos los registros.",
+        "deleted_count": eliminados,
+    }
+
 
 @router.post("", response_model=PersonaRead, status_code=status.HTTP_201_CREATED)
 def create_persona(persona_in: PersonaCreate, db: Session = Depends(get_db)):

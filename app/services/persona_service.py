@@ -78,6 +78,12 @@ def poblar_personas(db: Session, cantidad: int) -> int:
     db.commit()
     return len(nuevas)
 
+def reset_personas(db: Session) -> int:
+    """Elimina todos los registros de personas y devuelve cuantos se borraron."""
+    eliminados = db.query(Persona).delete()
+    db.commit()
+    return eliminados
+
 
 def list_personas(db: Session, skip: int = 0, limit: int = 100) -> Sequence[Persona]:
     """Return paginated list of Personas."""
