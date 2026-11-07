@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..views.persona import PersonaCreate, PersonaUpdate, PersonaRead, PoblarRequest
+from ..views.persona import PersonaCreate, PersonaUpdate, PersonaRead, PoblarRequest, EstadisticasEdadResponse
 from ..services import persona_service
 
 router = APIRouter(prefix="/personas", tags=["personas"])
@@ -51,6 +51,11 @@ def list_personas(
 ):
     """List Personas with pagination via service layer."""
     return persona_service.list_personas(db, skip=skip, limit=limit)
+
+@router.get("/estadisticas/edad", response_model=EstadisticasEdadResponse)
+def estadisticas_edad_endpoint(db: Session = Depends(get_db)):
+    """Endpoint 4: Retorna edad promedio (1 decimal), minima y maxima calculadas con TIMESTAMPDIFF en SQL."""
+    return persona_service.obtener_estadisticas_edad(db)
 
 
 @router.get("/{persona_id}", response_model=PersonaRead)

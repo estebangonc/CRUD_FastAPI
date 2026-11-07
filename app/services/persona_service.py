@@ -1,4 +1,5 @@
 import random
+
 import re
 import unicodedata
 from faker import Faker
@@ -141,3 +142,23 @@ def delete_persona(db: Session, persona_id: int) -> None:
         raise PersonaNotFoundError()
     db.delete(obj)
     db.commit()
+
+def obtener_estadisticas_edad(db: Session) -> dict:
+    sql = text(f"""
+        SELECT
+            ROUND(AVG(TIMESTAMPDIFF(YEAR, birth_date, CURDATE())), 1) AS promedio,
+            MIN(TIMESTAMPDIFF(YEAR, birth_date, CURDATE())) AS minima,
+            MAX(TIMESTAMPDIFF(YEAR, birth_date, CURDATE())) AS maxima
+        FROM {Persona.__tablename__}
+    """)
+    fila = db.execute(sql).fetchone()
+
+    # Tabla vacía (o sin fechas): AVG/MIN/MAX devuelven NULL
+    if fila is None or fila.promedio is None:
+        return {"edad_promedio": 0.0, "edad_minima": 0, "edad_maxima": 0}
+
+    return {
+        "edad_promedio": float(fila.promedio),
+        "edad_minima": int(fila.minima),
+        "edad_maxima": int(fila.maxima),
+    }
