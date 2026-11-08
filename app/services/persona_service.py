@@ -5,7 +5,7 @@ import unicodedata
 from faker import Faker
 
 from typing import Sequence
-from sqlalchemy import or_, text
+from sqlalchemy import extract, or_, text
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -109,6 +109,16 @@ def get_persona(db: Session, persona_id: int) -> Persona:
     if not obj:
         raise PersonaNotFoundError()
     return obj
+
+
+def obtener_cumpleaneros_por_mes(db: Session, numero_mes: int) -> Sequence[Persona]:
+    """Personas que cumplen anios en el mes dado (1-12), sin importar el anio."""
+    return (
+        db.query(Persona)
+        .filter(extract("month", Persona.birth_date) == numero_mes)
+        .order_by(Persona.id)
+        .all()
+    )
 
 
 def update_persona(db: Session, persona_id: int, payload: PersonaUpdate) -> Persona:

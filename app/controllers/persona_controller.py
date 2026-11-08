@@ -74,6 +74,17 @@ def get_persona(persona_id: int, db: Session = Depends(get_db)):
     return persona_service.get_persona(db, persona_id)
 
 
+@router.get("/cumpleanios/mes/{numero_mes}", response_model=List[PersonaRead])
+def cumpleanios_mes_endpoint(numero_mes: int, db: Session = Depends(get_db)):
+    """Endpoint 7: Personas que cumplen anios en el mes indicado (1-12)."""
+    if numero_mes < 1 or numero_mes > 12:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El mes debe ser un entero entre 1 y 12.",
+        )
+    return persona_service.obtener_cumpleaneros_por_mes(db, numero_mes)
+
+
 @router.put("/{persona_id}", response_model=PersonaRead)
 def update_persona(persona_id: int, persona_in: PersonaUpdate, db: Session = Depends(get_db)):
     """Update an existing Persona (partial) via service layer."""
