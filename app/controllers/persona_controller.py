@@ -96,6 +96,11 @@ def cumpleanios_mes_endpoint(numero_mes: int, db: Session = Depends(get_db)):
 
 @router.patch("/bulk/desactivar", response_model=BulkDesactivarResponse)
 def desactivar_bulk_endpoint(payload: BulkDesactivarRequest, db: Session = Depends(get_db)):
+    if not payload.ids or len(payload.ids) > 100:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La lista de IDs no puede estar vacía ni tener más de 100 elementos.",
+        )
     return persona_service.desactivar_personas_masivo(db, payload.ids)
 
 
