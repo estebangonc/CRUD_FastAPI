@@ -143,3 +143,9 @@ curl -s -X DELETE http://127.0.0.1:8000/personas/1 -i
 - `GET /personas/estadisticas/edad` - Estadísticas de edad (promedio a 1 decimal, mínima y máxima).
 - `GET /personas/buscar/{termino}` - Búsqueda parcial en nombre, apellido y correo.
 - `GET /personas/reporte/activos` - Reporte proyectado de usuarios activos (id, email, phone, is_active).
+
+### Endpoints desarrollados por Alejandro
+
+- `GET /personas/cumpleanios/mes/{numero_mes}` - Personas que cumplen años en el mes indicado (1-12).
+- `PATCH /personas/bulk/desactivar` - Desactivación masiva por lista de IDs, reportando los no encontrados.
+- `GET /personas/exportar/csv` - Exporta todos los registros en CSV descargable.
