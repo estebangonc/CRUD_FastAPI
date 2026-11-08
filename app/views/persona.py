@@ -33,6 +33,19 @@ class PersonaUpdate(BaseModel):
     notes: str | None = None
 
 
+class BulkDesactivarRequest(BaseModel):
+    """Cuerpo del PATCH /personas/bulk/desactivar."""
+    ids: list[int]
+
+
+class BulkDesactivarResponse(BaseModel):
+    """Respuesta de la desactivacion masiva."""
+    message: str
+    desactivados: list[int]
+    no_encontrados: list[int]
+    total_desactivados: int
+
+
 class PersonaRead(BaseModel):
     """Schema used to return Persona data to clients."""
     id: int
