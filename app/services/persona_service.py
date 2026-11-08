@@ -121,6 +121,27 @@ def obtener_cumpleaneros_por_mes(db: Session, numero_mes: int) -> Sequence[Perso
     )
 
 
+def desactivar_personas_masivo(db: Session, ids: list[int]) -> dict:
+    """Desactiva (is_active = False) las personas que existen y reporta los IDs que no."""
+    ids_unicos = list(dict.fromkeys(ids))  # sin repetidos, conservando el orden
+    encontrados = {
+        fila.id for fila in db.query(Persona.id).filter(Persona.id.in_(ids_unicos)).all()
+    }
+    if encontrados:
+        db.query(Persona).filter(Persona.id.in_(list(encontrados))).update(
+            {Persona.is_active: False}, synchronize_session=False
+        )
+        db.commit()
+    desactivados = [i for i in ids_unicos if i in encontrados]
+    no_encontrados = [i for i in ids_unicos if i not in encontrados]
+    return {
+        "message": "Operación completada.",
+        "desactivados": desactivados,
+        "no_encontrados": no_encontrados,
+        "total_desactivados": len(desactivados),
+    }
+
+
 def update_persona(db: Session, persona_id: int, payload: PersonaUpdate) -> Persona:
     """Update Persona partially, enforcing unique email."""
     obj = db.query(Persona).filter(Persona.id == persona_id).first()
