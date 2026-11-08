@@ -76,6 +76,7 @@ def get_persona(persona_id: int, db: Session = Depends(get_db)):
 
 @router.get("/cumpleanios/mes/{numero_mes}", response_model=List[PersonaRead])
 def cumpleanios_mes_endpoint(numero_mes: int, db: Session = Depends(get_db)):
+    """Endpoint 7: Personas que cumplen anios en el mes indicado (1-12)."""
     if numero_mes < 1 or numero_mes > 12:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
