@@ -1,5 +1,7 @@
+import io
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -103,6 +105,17 @@ def desactivar_bulk_endpoint(payload: BulkDesactivarRequest, db: Session = Depen
             detail="La lista de IDs no puede estar vacía ni tener más de 100 elementos.",
         )
     return persona_service.desactivar_personas_masivo(db, payload.ids)
+
+
+@router.get("/exportar/csv")
+def exportar_csv_endpoint(db: Session = Depends(get_db)):
+    """Endpoint 9: Exporta todos los registros en formato CSV descargable."""
+    contenido = persona_service.generar_csv_personas(db)
+    return StreamingResponse(
+        io.StringIO(contenido),
+        media_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="personas.csv"'},
+    )
 
 
 @router.put("/{persona_id}", response_model=PersonaRead)

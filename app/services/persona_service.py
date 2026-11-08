@@ -1,3 +1,5 @@
+import csv
+import io
 import random
 
 import re
@@ -140,6 +142,25 @@ def desactivar_personas_masivo(db: Session, ids: list[int]) -> dict:
         "no_encontrados": no_encontrados,
         "total_desactivados": len(desactivados),
     }
+
+
+CSV_COLUMNAS = [
+    "id", "first_name", "last_name", "email", "phone", "birth_date",
+    "is_active", "notes",
+]
+
+
+def generar_csv_personas(db: Session) -> str:
+    """Devuelve todas las personas como texto CSV (sin created_at)."""
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(CSV_COLUMNAS)
+    for p in db.query(Persona).order_by(Persona.id).all():
+        writer.writerow([
+            p.id, p.first_name, p.last_name, p.email,
+            p.phone, p.birth_date, p.is_active, p.notes,
+        ])
+    return buffer.getvalue()
 
 
 def update_persona(db: Session, persona_id: int, payload: PersonaUpdate) -> Persona:
