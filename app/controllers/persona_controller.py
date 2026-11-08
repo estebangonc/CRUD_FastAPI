@@ -74,6 +74,11 @@ def get_persona(persona_id: int, db: Session = Depends(get_db)):
     return persona_service.get_persona(db, persona_id)
 
 
+@router.get("/cumpleanios/mes/{numero_mes}", response_model=List[PersonaRead])
+def cumpleanios_mes_endpoint(numero_mes: int, db: Session = Depends(get_db)):
+    return persona_service.obtener_cumpleaneros_por_mes(db, numero_mes)
+
+
 @router.put("/{persona_id}", response_model=PersonaRead)
 def update_persona(persona_id: int, persona_in: PersonaUpdate, db: Session = Depends(get_db)):
     """Update an existing Persona (partial) via service layer."""
