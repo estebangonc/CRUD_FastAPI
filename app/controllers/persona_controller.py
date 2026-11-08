@@ -109,6 +109,7 @@ def desactivar_bulk_endpoint(payload: BulkDesactivarRequest, db: Session = Depen
 
 @router.get("/exportar/csv")
 def exportar_csv_endpoint(db: Session = Depends(get_db)):
+    """Endpoint 9: Exporta todos los registros en formato CSV descargable."""
     contenido = persona_service.generar_csv_personas(db)
     return StreamingResponse(
         io.StringIO(contenido),
