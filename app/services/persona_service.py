@@ -75,7 +75,14 @@ def poblar_personas(db: Session, cantidad: int) -> int:
                       f"{random.randint(100, 999)} {random.randint(1000, 9999)}",
                 birth_date=fake.date_of_birth(minimum_age=18, maximum_age=85),
                 is_active=fake.boolean(),
-                notes=fake.sentence(nb_words=6) if random.random() < 0.5 else None,
+                notes=random.choice([
+                    "Cliente frecuente", 
+                    "Requiere seguimiento", 
+                    "Nuevo registro", 
+                    "Sin observaciones", 
+                    "Llamar más tarde",
+                    "Revisar historial"
+                ]) if random.random() < 0.5 else None,
             )
         )
         
