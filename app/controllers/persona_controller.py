@@ -3,7 +3,16 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..views.persona import PersonaCreate, PersonaUpdate, PersonaRead, PoblarRequest, EstadisticasEdadResponse,PersonaActivaResponse
+from ..views.persona import (
+    PersonaCreate,
+    PersonaUpdate,
+    PersonaRead,
+    PoblarRequest,
+    EstadisticasEdadResponse,
+    PersonaActivaResponse,
+    BulkDesactivarRequest,
+    BulkDesactivarResponse,
+)
 from ..services import persona_service
 
 router = APIRouter(prefix="/personas", tags=["personas"])
@@ -83,6 +92,17 @@ def cumpleanios_mes_endpoint(numero_mes: int, db: Session = Depends(get_db)):
             detail="El mes debe ser un entero entre 1 y 12.",
         )
     return persona_service.obtener_cumpleaneros_por_mes(db, numero_mes)
+
+
+@router.patch("/bulk/desactivar", response_model=BulkDesactivarResponse)
+def desactivar_bulk_endpoint(payload: BulkDesactivarRequest, db: Session = Depends(get_db)):
+    """Endpoint 8: Desactiva en una sola operacion una lista de IDs (maximo 100)."""
+    if not payload.ids or len(payload.ids) > 100:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La lista de IDs no puede estar vacía ni tener más de 100 elementos.",
+        )
+    return persona_service.desactivar_personas_masivo(db, payload.ids)
 
 
 @router.put("/{persona_id}", response_model=PersonaRead)
